@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Absensi Online</title>
+    <style>
+        /* CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HTML content here -->
+    </div>
+
+    <script>
+        // JavaScript implementation here
+        // 1. Fungsi untuk menampilkan waktu terkini
+        function updateTimestamp() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('timestamp').value = now.toLocaleDateString('id-ID', options);
+        }
+        
+        // 2. Memperbarui timestamp saat halaman dimuat dan setiap detik
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+        
+        // 3. Menangani pengiriman formulir
+        document.getElementById('attendanceForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Menampilkan status loading
+            submitButton.disabled = true;
+            submitButton.textContent = 'Mengirim...';
+            statusMessage.style.display = 'none';
+            
+            // Mengumpulkan data formulir
+            const formData = {
+                name: document.getElementById('name').value,
+                employeeId: document.getElementById('employeeId').value,
+                location: document.getElementById('location').value,
+                attendanceType: document.getElementById('attendanceType').value,
+                timestamp: document.getElementById('timestamp').value
+            };
+            
+            try {
+                // Ganti URL_DEPLOY_SCRIPT_ANDA dengan URL deployment Google Apps Script Anda
+                const scriptURL = 'URL_DEPLOY_SCRIPT_ANDA';
+                
+                // 4. Mengirim data ke Google Apps Script
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    body: JSON.stringify(formData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.result === 'success') {
+                    statusMessage.textContent = 'Absensi berhasil dikirim!';
+                    statusMessage.className = 'status success';
+                    document.getElementById('attendanceForm').reset();
+                    updateTimestamp();
+                } else {
+                    throw new Error(result.error || 'Terjadi kesalahan');
+                }
+            } catch (error) {
+                console.error('Error!', error.message);
+                statusMessage.textContent = 'Gagal mengirim absensi: ' + error.message;
+                statusMessage.className = 'status error';
+            } finally {
+                statusMessage.style.display = 'block';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Kirim Absensi';
+                
+                // Scroll ke pesan status
+                statusMessage.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
