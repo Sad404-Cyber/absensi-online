@@ -1,0 +1,32 @@
+📱 Cara Menggunakan
+
+Simpan kode di atas sebagai file absensi_qr.html.
+
+Buka di browser (Chrome disarankan).
+
+Klik tombol “Mulai Kamera”, izinkan akses kamera.
+
+Arahkan kamera ke QR Code yang berisi data siswa.
+
+Format QR bisa:
+
+Nama|NIS (contoh: Budi Santoso|2023001)
+
+atau student_id:123
+
+Setiap kali QR dikenali, data otomatis masuk ke tabel.
+
+Klik Export CSV untuk menyimpan rekap absensi.
+
+Klik Reset Data untuk menghapus rekap sementara.
+
+📘 Catatan
+
+Semua data hanya disimpan di memori browser (tidak ke server).
+
+Kamu bisa buat QR siswa di situs seperti https://www.qr-code-generator.com/
+.
+
+Bisa dijalankan secara offline (tanpa internet), karena hanya pakai JavaScript.
+
+Jika ingin versi dengan database dan admin panel (PHP + MySQL), saya bisa lanjutkan versi backend-nya.
