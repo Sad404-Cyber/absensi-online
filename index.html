@@ -1,264 +1,99 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Absensi QR - Scan & Export Excel</title>
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 16px; }
-    h1 { margin-bottom: 8px; }
-    #reader { width: 320px; max-width: 100%; margin-bottom: 12px; }
-    .controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
-    button { padding:8px 12px; border-radius:6px; border:1px solid #ccc; background:#f6f6f6; cursor:pointer; }
-    button.primary { background:#0078d4; color:white; border-color:#006bb3; }
-    table { width:100%; border-collapse: collapse; margin-top:12px; }
-    th,td { border:1px solid #ddd; padding:8px; text-align:left; }
-    th { background:#f2f2f2; }
-    .small { font-size:0.9rem; color:#555 }
-    #log { max-height:120px; overflow:auto; border:1px solid #eee; padding:8px; font-size:0.9rem; background:#fafafa }
-  </style>
-  <!-- html5-qrcode CDN -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
-  <!-- SheetJS (xlsx) untuk membuat .xlsx di klien -->
-  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <meta charset="UTF-8">
+  <title>SYSTEM NET</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Absensi Siswa — Scan QR</h1>
-  <div class="small">Scan QR kode siswa. Format QR yang dianjurkan: <code>id|Nama Siswa</code> atau hanya <code>Nama Siswa</code>.</div>
 
-  <div id="reader"></div>
-
-  <div class="controls">
-    <button id="startCameraBtn" class="primary">Mulai Kamera</button>
-    <button id="stopCameraBtn">Stop Kamera</button>
-    <button id="exportCsvBtn">Export CSV</button>
-    <button id="exportXlsxBtn">Export XLSX</button>
-    <button id="resetBtn">Reset Data</button>
-    <label style="align-items:center;display:flex;gap:6px;">
-      <input id="autoDownloadCheckbox" type="checkbox" checked> Auto-download .xlsx setiap scan
-    </label>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">SYSTEM NET</a>
   </div>
+</nav>
 
-  <div id="log" aria-live="polite"></div>
+<!-- Hero -->
+<section class="bg-primary text-white text-center pt-5 mt-5">
+  <div class="container py-5">
+    <h1 class="display-5 fw-bold">Internet Cepat & Stabil</h1>
+    <p class="lead">Solusi jaringan internet untuk rumah, kantor, dan bisnis</p>
+  </div>
+</section>
 
-  <h2>Rekap Absensi (<span id="count">0</span>)</h2>
-  <table id="attendanceTable">
-    <thead>
-      <tr><th>No</th><th>ID</th><th>Nama</th><th>Waktu (Local)</th><th>Metode</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<!-- Tentang -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">Tentang Kami</h2>
+    <p class="text-center">
+      System Net adalah penyedia layanan jaringan internet berbasis 
+      dengan kecepatan tinggi, stabil, dan dukungan teknis profesional.
+    </p>
+  </div>
+</section>
 
-<script>
-/*
-  Cara kerja:
-  - Menggunakan html5-qrcode untuk membaca barcode/QR dari kamera.
-  - Setiap scan -> parse data -> simpan ke localStorage (key "attendance_db").
-  - Update tampilan tabel.
-  - Jika auto-download aktif -> generate .xlsx via SheetJS dan trigger unduh.
-*/
+<!-- Layanan -->
+<section class="bg-light py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">Layanan Kami</h2>
+    <div class="row text-center">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5>Internet Rumah</h5>
+            <p>Unlimited, stabil & cepat</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5>Internet Bisnis</h5>
+            <p>Dedicated & SLA tinggi</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5>Instalasi Jaringan</h5>
+            <p>Wireless</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-/* ---------- Utility: penyimpanan (localStorage) ---------- */
-const STORAGE_KEY = 'attendance_db_v1';
+<!-- Galeri -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">Dokumentasi Proyek</h2>
+    <div id="galleryContainer" class="row g-3"></div>
+  </div>
+</section>
 
-function loadDatabase() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
-  try { return JSON.parse(raw); } catch(e) { console.error('DB parse error', e); return []; }
-}
-function saveDatabase(rows) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
-}
+<!-- Lokasi -->
+<section class="bg-light py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">Lokasi Kantor</h2>
+    <iframe 
+      class="w-100 rounded shadow"
+      height="300"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63267.98064504233!2d110.69556459354462!3d-7.6563769940480135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a3f0ad37809e1%3A0x4027a76e352ed30!2sKec.%20Juwiring%2C%20Kabupaten%20Klaten%2C%20Jawa%20Tengah!5e0!3m2!1sid!2sid!4v1765912035555!5m2!1sid!2sid">
+    </iframe>
+  </div>
+</section>
 
-/* ---------- Render tabel & log ---------- */
-const tbody = document.querySelector('#attendanceTable tbody');
-const countSpan = document.getElementById('count');
-const logDiv = document.getElementById('log');
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3">
+  © Hafidz Abdillah
+</footer>
 
-function formatDatetime(d) {
-  const pad = n => (n<10? '0'+n : n);
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-
-function refreshTable() {
-  const rows = loadDatabase();
-  tbody.innerHTML = '';
-  rows.forEach((r, idx) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${idx+1}</td>
-                    <td>${r.id ?? ''}</td>
-                    <td>${r.name ?? ''}</td>
-                    <td>${r.time}</td>
-                    <td>${r.method ?? 'QR'}</td>`;
-    tbody.appendChild(tr);
-  });
-  countSpan.textContent = rows.length;
-}
-
-function addLog(msg) {
-  const ts = new Date().toLocaleTimeString();
-  logDiv.innerHTML = `<div>[${ts}] ${msg}</div>` + logDiv.innerHTML;
-}
-
-/* ---------- Scan handling ---------- */
-let html5QrcodeScanner = null;
-const readerElementId = "reader";
-const autoDownloadCheckbox = document.getElementById('autoDownloadCheckbox');
-
-function onScanSuccess(decodedText, decodedResult) {
-  // parsed content: support "id|name" or plain name
-  let id = '', name = decodedText;
-  if (decodedText.includes('|')) {
-    const parts = decodedText.split('|');
-    id = parts[0].trim();
-    name = parts.slice(1).join('|').trim();
-  }
-  const now = new Date();
-  const record = {
-    id: id || '',
-    name: name || '',
-    time: formatDatetime(now),
-    method: 'QR'
-  };
-
-  // avoid exact duplicates in a short time window (optional)
-  const rows = loadDatabase();
-  const last = rows[rows.length - 1];
-  if (last && last.id === record.id && last.name === record.name) {
-    // if duplicate immediate (same time), still allow but avoid double push if scanned twice in <2s
-    const lastTime = new Date(last.time.replace(' ', 'T'));
-    if ((now - lastTime) < 2000) {
-      addLog(`Duplikat terdeteksi: ${record.name} (diabaikan)`);
-      return;
-    }
-  }
-
-  rows.push(record);
-  saveDatabase(rows);
-  refreshTable();
-  addLog(`Tertambah: ${record.name} (${record.id})`);
-
-  // auto export xlsx if dipilih
-  if (autoDownloadCheckbox.checked) {
-    try {
-      exportXlsx(rows, `absensi_${(new Date()).toISOString().slice(0,19).replace(/[:T]/g,'-')}.xlsx`);
-      addLog('Auto-download .xlsx dimulai.');
-    } catch(e) {
-      console.error(e);
-      addLog('Gagal auto-download: ' + e.message);
-    }
-  }
-}
-
-/* ---------- Kamera control ---------- */
-document.getElementById('startCameraBtn').addEventListener('click', async () => {
-  if (html5QrcodeScanner) {
-    addLog('Kamera sudah berjalan.');
-    return;
-  }
-  try {
-    html5QrcodeScanner = new Html5Qrcode(readerElementId);
-    const devices = await Html5Qrcode.getCameras();
-    let cameraId = (devices && devices.length) ? devices[0].id : null;
-    if (!cameraId) throw new Error('Tidak menemukan kamera');
-    const config = { fps: 10, qrbox: 250 };
-    await html5QrcodeScanner.start(
-      cameraId,
-      config,
-      onScanSuccess,
-      (errorMessage) => { /* ignore per-frame errors */ }
-    );
-    addLog('Kamera dimulai.');
-  } catch (e) {
-    addLog('Gagal mulai kamera: ' + e.message);
-    console.error(e);
-  }
-});
-
-document.getElementById('stopCameraBtn').addEventListener('click', async () => {
-  if (!html5QrcodeScanner) {
-    addLog('Kamera belum aktif.');
-    return;
-  }
-  try {
-    await html5QrcodeScanner.stop();
-    await html5QrcodeScanner.clear();
-    html5QrcodeScanner = null;
-    addLog('Kamera dihentikan.');
-  } catch (e) {
-    addLog('Gagal berhenti kamera: ' + e.message);
-    console.error(e);
-  }
-});
-
-/* ---------- Export CSV / XLSX ---------- */
-function toCSV(rows) {
-  // CSV header
-  const header = ['No','ID','Nama','Waktu','Metode'];
-  const lines = [header.join(',')];
-  rows.forEach((r, idx) => {
-    // escape quotes and commas
-    const esc = v => `"${String(v ?? '').replace(/"/g,'""')}"`;
-    lines.push([idx+1, r.id, r.name, r.time, r.method].map(esc).join(','));
-  });
-  return lines.join('\r\n');
-}
-
-function downloadFile(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
-}
-
-document.getElementById('exportCsvBtn').addEventListener('click', () => {
-  const rows = loadDatabase();
-  const csv = toCSV(rows);
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const filename = `absensi_${(new Date()).toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-  downloadFile(blob, filename);
-  addLog('Export CSV siap diunduh.');
-});
-
-document.getElementById('exportXlsxBtn').addEventListener('click', () => {
-  const rows = loadDatabase();
-  exportXlsx(rows, `absensi_${(new Date()).toISOString().slice(0,19).replace(/[:T]/g,'-')}.xlsx`);
-  addLog('Export XLSX dipicu.');
-});
-
-function exportXlsx(rows, filename = 'absensi.xlsx') {
-  // convert to worksheet
-  const data = rows.map((r, idx) => ({
-    No: idx+1,
-    ID: r.id,
-    Nama: r.name,
-    Waktu: r.time,
-    Metode: r.method
-  }));
-  const ws = XLSX.utils.json_to_sheet(data, {header:["No","ID","Nama","Waktu","Metode"]});
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Absensi");
-  // write file (trigger download)
-  XLSX.writeFile(wb, filename);
-}
-
-/* ---------- Reset ---------- */
-document.getElementById('resetBtn').addEventListener('click', () => {
-  if (!confirm('Yakin ingin menghapus semua data absensi lokal?')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  refreshTable();
-  addLog('Data direset.');
-});
-
-/* ---------- Initialization ---------- */
-(function init(){
-  refreshTable();
-  addLog('Halaman siap. Tekan "Mulai Kamera" untuk scan.');
-})();
-</script>
+<script src="js/public.js"></script>
 </body>
 </html>
